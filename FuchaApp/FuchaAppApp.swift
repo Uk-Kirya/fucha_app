@@ -18,8 +18,8 @@ struct FuchaApp: App {
             if isLoggedIn {
                 WelcomeView()
             } else {
-                MainTabView()
-                // WelcomeView()
+                // MainTabView()
+                WelcomeView()
             }
         }
     }
