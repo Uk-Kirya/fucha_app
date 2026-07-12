@@ -1,5 +1,5 @@
 //
-//  FuchaAppApp.swift
+//  Start.swift
 //  FuchaApp
 //
 //  Created by Kirill Lossev on 08.07.2026.
@@ -9,18 +9,26 @@ import SwiftUI
 import SwiftData
 
 @main
-struct FuchaApp: App {
-    
-    @AppStorage("isLoggedIn") private var isLoggedIn = false
+struct Start: App {
+
+    @StateObject var auth = AuthManager.shared
 
     var body: some Scene {
+
         WindowGroup {
-            if isLoggedIn {
-                WelcomeView()
+
+            if auth.isLoggedIn {
+
+                MainTabView()
+
             } else {
-                // MainTabView()
+
                 WelcomeView()
+
             }
+
         }
+
     }
+
 }

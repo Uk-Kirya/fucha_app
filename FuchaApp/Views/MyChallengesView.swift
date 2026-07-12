@@ -1,5 +1,5 @@
 //
-//  MyChallenges.swift
+//  MyChallengesView.swift
 //  FuchaApp
 //
 //  Created by Kirill Lossev on 08.07.2026.

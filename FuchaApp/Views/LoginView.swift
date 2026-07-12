@@ -47,7 +47,7 @@ struct LoginView: View {
                 } label: {
 
                     Image(systemName: "xmark")
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Color(.label))
                         .frame(width:44,height:44)
                         .glassEffect()
 
@@ -105,7 +105,25 @@ struct LoginView: View {
 
 
                 Button {
-                    
+                    Task {
+
+                            do {
+
+                                try await AuthService.shared.login(
+                                    email: email,
+                                    password: password
+                                )
+
+                                dismiss()
+
+                            } catch {
+
+                                print(error.localizedDescription)
+
+                            }
+
+                        }
+
                 } label: {
 
                     Text("Продолжить")

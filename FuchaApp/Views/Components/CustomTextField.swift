@@ -131,6 +131,8 @@ struct CustomTextField: View {
         .padding(.horizontal,16)
         .frame(height:56)
         .background(Color(.secondarySystemBackground))
+        .autocorrectionDisabled(true)
+        .textInputAutocapitalization(.never)
         .clipShape(
             RoundedRectangle(
                 cornerRadius:16
