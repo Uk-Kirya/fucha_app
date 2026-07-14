@@ -91,6 +91,17 @@ struct CustomTextField: View {
 
 
             Spacer()
+            
+            
+            if isPassword {
+                Button {
+                    showPassword.toggle()
+                } label: {
+                    Image(systemName: showPassword ? "eye" : "eye.slash")
+                        .foregroundColor(.secondary)
+                        .font(.system(size: 16))
+                }
+            }
 
 
 
@@ -115,18 +126,6 @@ struct CustomTextField: View {
 
 
 
-            if isPassword {
-                Button {
-                    showPassword.toggle()
-                } label: {
-                    Image(systemName: showPassword ? "eye" : "eye.slash")
-                        .foregroundColor(.secondary)
-                        .font(.system(size: 16))
-                }
-            }
-
-
-
         }
         .padding(.horizontal,16)
         .frame(height:56)
@@ -138,7 +137,6 @@ struct CustomTextField: View {
                 cornerRadius:16
             )
         )
-        .padding(.bottom,10)
 
 
     }

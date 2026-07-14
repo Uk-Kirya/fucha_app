@@ -11,12 +11,5 @@ import Foundation
 struct User: Codable {
     let id: Int
     let name: String
-    let age: Int
-    let city: String
     let email: String
-}
-
-
-struct UserResponse: Codable {
-    let data: User
 }

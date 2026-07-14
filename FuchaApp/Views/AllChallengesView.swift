@@ -34,6 +34,7 @@ struct AllChallenges: View {
                         fetchData()
                     }
                     .padding()
+                    .glassEffect()
                 }
             } else {
                 Text(responseData)
@@ -63,9 +64,9 @@ struct AllChallenges: View {
         
         Task {
             do {
-                let response: UserResponse = try await NetworkService.shared.request("/auth/test")
+                let response: User = try await NetworkService.shared.request("/auth/test")
                 await MainActor.run {
-                    let user = response.data
+                    let user = response
                     responseData = "User: \(user.name) (\(user.email))"
                     isLoading = false
                 }

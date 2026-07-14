@@ -78,10 +78,23 @@ final class NetworkService {
         }
         
         // Check other status codes
-        guard httpResponse.statusCode == 200 else {
-            let errorData = try? JSONDecoder().decode(APIError.self, from: data)
-            let message = errorData?.errors.values.first ?? "Request failed with status \(httpResponse.statusCode)"
-            throw NSError(domain: "", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: message])
+        guard (200...299).contains(httpResponse.statusCode) else {
+
+            if let apiError = try? JSONDecoder()
+                .decode(APIError.self, from: data) {
+
+                throw apiError
+            }
+
+
+            throw NSError(
+                domain: "",
+                code: httpResponse.statusCode,
+                userInfo: [
+                    NSLocalizedDescriptionKey:
+                        "Request failed with status \(httpResponse.statusCode)"
+                ]
+            )
         }
         
         // Decode response

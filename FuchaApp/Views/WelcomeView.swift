@@ -13,47 +13,62 @@ struct WelcomeView: View {
 
     var body: some View {
                 
-        VStack(spacing:12) {
+        VStack {
             
-            Image("fucha_start")
-                .padding(.bottom, 50)
+            Image("start__image")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
             
-            Text("Создайте бесплатный аккаунт или войдите в существующий")
-                .font(.system(size:22, weight:.bold))
-                .multilineTextAlignment(.center)
-            
-            Text("Создавайте планы и челленджи или участвуйте в челленджах сообщества.")
-                .font(.system(size:15))
-                .foregroundStyle(.gray)
-                .multilineTextAlignment(.center)
-            
-            Button {
+            VStack(spacing:12) {
+                VStack {
+                    
+                    Text("Создавай планы.")
+                        .font(.system(size:30, weight:.bold))
+                        .multilineTextAlignment(.center)
+                    
+                    Text("Проходи челленджи.")
+                        .font(.system(size:30, weight:.bold))
+                        .multilineTextAlignment(.center)
+                    
+                    Text("Достигай большего.")
+                        .font(.system(size:30, weight:.bold))
+                        .multilineTextAlignment(.center)
+                    
+                }
                 
-                showLogin = true
+                Text("От спорта и путешествий до новых навыков и привычек — создавай личные планы, проходи челленджи сообщества и наблюдай за своим прогрессом")
+                    .font(.system(size:15))
+                    .foregroundStyle(.gray)
+                    .multilineTextAlignment(.center)
                 
-            } label: {
-                
-                Text("Войти или создать аккаунт")
-                    .foregroundStyle(.white)
-                    .frame(maxWidth:.infinity)
-                    .frame(height:56)
-                    .background(
-                        Color(
-                            red:150/255,
-                            green:94/255,
-                            blue:235/255
+                Button {
+                    
+                    showLogin = true
+                    
+                } label: {
+                    
+                    Text("Войти или создать аккаунт")
+                        .foregroundStyle(.white)
+                        .frame(maxWidth:.infinity)
+                        .frame(height:56)
+                        .background(
+                            Color(
+                                red:150/255,
+                                green:94/255,
+                                blue:235/255
+                            )
                         )
-                    )
-                    .clipShape(
-                        RoundedRectangle(
-                            cornerRadius:16
+                        .clipShape(
+                            RoundedRectangle(
+                                cornerRadius:16
+                            )
                         )
-                    )
-                
+                    
+                }
             }
+            .padding(.horizontal)
             
         }
-        .padding(.horizontal)
         
         .sheet(isPresented: $showLogin) {
             LoginView()

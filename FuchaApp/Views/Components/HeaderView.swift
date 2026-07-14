@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct HeaderView: View {
+    @State private var userManager = UserManager.shared
+    
     var body: some View {
         HStack {
             HStack(spacing: 8) {
@@ -22,7 +24,7 @@ struct HeaderView: View {
                         .frame(width: 22, height: 22)
                 }
                 
-                Text("fucha")
+                Text(userManager.currentUser?.name ?? "Fucha")
                     .fontWeight(Font.Weight.bold)
                     .font(.system(size: 24))
             }
