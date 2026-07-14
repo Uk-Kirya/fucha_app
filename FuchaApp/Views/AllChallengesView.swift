@@ -11,6 +11,7 @@ struct AllChallenges: View {
     @State private var responseData: String = "Загрузка..."
     @State private var isLoading = false
     @State private var errorMessage: String?
+    @StateObject private var authManager = AuthManager.shared
     
     var body: some View {
         VStack {
@@ -28,20 +29,24 @@ struct AllChallenges: View {
                         .foregroundColor(.red)
                         .padding()
                         .multilineTextAlignment(.center)
+                    
+                    Button("Повторить") {
+                        fetchData()
+                    }
+                    .padding()
                 }
             } else {
                 Text(responseData)
                 
                 Button {
                     Task {
-                        await logout()
+                        await performLogout()
                     }
                 } label: {
                     Text("Выйти")
                         .padding()
                         .glassEffect()
                 }
-                
             }
             
             Spacer()
@@ -56,95 +61,38 @@ struct AllChallenges: View {
         errorMessage = nil
         responseData = "Загрузка..."
         
-        guard let url = URL(string: "https://fucha.losdesign.ru/api/v1/test") else {
-            errorMessage = "Неверный URL"
-            isLoading = false
-            return
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue("ef3f905b509535db58bc6fb05cf8065646c32118cca8f99d7e51433e1e033c44", forHTTPHeaderField: "X-API-Key")
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async {
-                isLoading = false
-                
-                if let error = error {
-                    errorMessage = "Ошибка соединения: \(error.localizedDescription)"
-                    return
-                }
-                
-                guard let data = data else {
-                    errorMessage = "Нет данных от сервера"
-                    return
-                }
-                
-                do {
-                    let response = try JSONDecoder().decode(UserResponse.self, from: data)
+        Task {
+            do {
+                let response: UserResponse = try await NetworkService.shared.request("/auth/test")
+                await MainActor.run {
                     let user = response.data
-                    
                     responseData = "User: \(user.name) (\(user.email))"
-                    
-                } catch {
-                    let rawString = String(data: data, encoding: .utf8) ?? "Нет данных"
-                    errorMessage = "Ошибка парсинга JSON: \(error.localizedDescription)"
-                    responseData = "Сырой ответ:\n\(rawString)"
+                    isLoading = false
+                }
+            } catch {
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                    isLoading = false
                 }
             }
-        }.resume()
+        }
     }
-}
-
-
-func logout() async {
-
-    guard let access = AuthManager.shared.accessToken,
-          let refresh = AuthManager.shared.refreshToken
-    else {
-        return
+    
+    @MainActor
+    func logout() async {
+        authManager.logout()
     }
-
-
-    var request = URLRequest(
-        url: URL(
-            string: "https://fucha.losdesign.ru/api/v1/auth/logout"
-        )!
-    )
-
-
-    request.httpMethod = "POST"
-
-
-    request.setValue(
-        "Bearer \(access)",
-        forHTTPHeaderField: "Authorization"
-    )
-
-
-    request.setValue(
-        refresh,
-        forHTTPHeaderField: "X-Refresh-Token"
-    )
-
-
-    do {
-
-        let _ = try await URLSession.shared.data(
-            for: request
-        )
-
-    } catch {
-
-        print(error.localizedDescription)
-
-    }
-
-
-    await MainActor.run {
-
-        AuthManager.shared.logout()
-
+    
+    @MainActor
+    func performLogout() async {
+        do {
+            try await NetworkService.shared.logout()
+            // После успешного выхода, токены уже очищены в NetworkService.logout()
+            // Можно добавить навигацию на экран входа
+        } catch {
+            // Если logout на сервере не удался, все равно очищаем локальные токены
+            authManager.logout()
+            print("Logout error: \(error.localizedDescription)")
+        }
     }
 }

@@ -28,18 +28,14 @@ final class AuthManager: ObservableObject {
     }
 
     func save(access: String, refresh: String) {
-
         UserDefaults.standard.set(access, forKey: "access_token")
         UserDefaults.standard.set(refresh, forKey: "refresh_token")
-
         isLoggedIn = true
     }
 
     func logout() {
-
         UserDefaults.standard.removeObject(forKey: "access_token")
         UserDefaults.standard.removeObject(forKey: "refresh_token")
-
         isLoggedIn = false
     }
 
