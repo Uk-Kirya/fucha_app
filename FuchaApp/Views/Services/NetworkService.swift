@@ -11,7 +11,7 @@ final class NetworkService {
     
     static let shared = NetworkService()
     private let authManager = AuthManager.shared
-    // static let website_url = "http://127.0.0.1:8007"
+    //static let website_url = "http://127.0.0.1:8007"
     static let website_url = "https://fucha.losdesign.ru"
     
     private init() {}

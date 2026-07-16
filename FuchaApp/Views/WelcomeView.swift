@@ -10,6 +10,28 @@ import SwiftUI
 struct WelcomeView: View {
 
     @State private var showLogin = false
+    @State private var triggerHaptic = false
+    
+    @State private var imageScale = 0.5
+    @State private var imageRotation = -15.0
+    @State private var imageOpacity = 0.0
+    
+    private func playHapticPattern() {
+        let generator = UIImpactFeedbackGenerator(style: .heavy)
+        generator.prepare()
+        
+        var count = 0
+        let maxCount = 15
+        
+        Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { timer in
+            generator.impactOccurred()
+            count += 1
+            
+            if count >= maxCount {
+                timer.invalidate()
+            }
+        }
+    }
 
     var body: some View {
                 
@@ -18,6 +40,16 @@ struct WelcomeView: View {
             Image("start__image")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
+                .scaleEffect(imageScale)
+                .rotationEffect(.degrees(imageRotation))
+                .opacity(imageOpacity)
+                .onAppear {
+                    withAnimation(.spring(response: 0.6, dampingFraction: 0.4, blendDuration: 0)) {
+                        imageScale = 1.0
+                        imageRotation = 0
+                        imageOpacity = 1.0
+                    }
+                }
             
             VStack(spacing:12) {
                 VStack {
@@ -69,6 +101,10 @@ struct WelcomeView: View {
             .padding(.horizontal)
             
         }
+        .onAppear {
+            playHapticPattern()
+        }
+        .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.3), trigger: triggerHaptic)
         
         .sheet(isPresented: $showLogin) {
             LoginView()

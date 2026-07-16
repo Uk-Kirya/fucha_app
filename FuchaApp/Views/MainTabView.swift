@@ -10,8 +10,16 @@ import SwiftUI
 struct MainTabView: View {
     @State private var selectedTab = 0
     
+    private func playHaptic() {
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.prepare()
+        generator.impactOccurred()
+    }
+
+    
     var body: some View {
         ZStack(alignment: .bottom) {
+            
             // Контент
             if selectedTab == 0 {
                 MyChallenges()
@@ -21,26 +29,34 @@ struct MainTabView: View {
             
             // Фиксированный хедер (сверху)
             VStack {
+                
                 HeaderView()
+                
                 Spacer()
+                
             }
                 
-            
             // Фиксированный таб-бар (снизу)
             HStack {
                 HStack(spacing: 0) {
                     TabButton(
-                        title: "Мои планы",
-                        icon: "sharedwithyou",
+                        title: "Главная",
+                        icon: "home",
                         isSelected: selectedTab == 0,
-                        action: { selectedTab = 0 }
+                        action: {
+                            selectedTab = 0
+                            playHaptic()
+                        }
                     )
                     
                     TabButton(
-                        title: "Все планы",
+                        title: "Челленджи",
                         icon: "target",
                         isSelected: selectedTab == 1,
-                        action: { selectedTab = 1 }
+                        action: {
+                            selectedTab = 1
+                            playHaptic()
+                        }
                     )
                 }
                 .padding(4)
@@ -62,11 +78,20 @@ struct MainTabView: View {
                         .glassEffect()
                 }
             }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 24)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
+            .background(
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color(.systemBackground).opacity(1),
+                        Color(.systemBackground).opacity(0)
+                    ]),
+                    startPoint: .bottom,
+                    endPoint: .top
+                )
+            )
         }
-        .ignoresSafeArea(edges: .top)
-        .ignoresSafeArea(edges: .bottom)
+        .ignoresSafeArea(edges: [.top, .bottom])
     }
 }
 
@@ -76,18 +101,28 @@ struct TabButton: View {
     let isSelected: Bool
     let action: () -> Void
     
+    @Environment(\.colorScheme) var colorScheme
+    
+    private var backgroundActiveTabColor: Color {
+        colorScheme == .dark ? Color(red:51/255, green:51/255, blue:51/255) : Color(red:239/255, green:239/255, blue:239/255)
+    }
+    
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 4) {
-                Image(systemName: icon)
-                    .font(.system(size: 20))
+            VStack(spacing: 2) {
+                Image(icon)
+                    .renderingMode(.template)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 20, height: 20)
+                    .foregroundColor(.primary)
                 Text(title)
                     .font(.system(size: 12))
             }
-            .foregroundColor(isSelected ? .white : .primary)
+            .foregroundColor(.primary)
             .padding(.horizontal, 20)
             .padding(.vertical, 8)
-            .background(isSelected ? Color(red: 150/255, green: 94/255, blue: 235/255) : Color.clear)
+            .background(isSelected ? backgroundActiveTabColor : Color.clear)
             .clipShape(Capsule())
         }
     }
